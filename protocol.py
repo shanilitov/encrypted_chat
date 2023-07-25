@@ -32,7 +32,6 @@ def hash_function(message):
 
 
 def signature(message, mac_privet_key):
-    # print('signature: ' + str(hash_function(message)))
     return pow(hash_function(message), mac_privet_key, MAC_P * MAC_Q)
 
 def receive_hash(signature, mac_public_key):
@@ -44,7 +43,6 @@ def make_message(message, shared_secret, mac_privet_key):
     h_len = str(len(str(h))).zfill(SIZE_FIELD)
 
     e = encrypt(message, shared_secret)
-    # print('encrypt message: ' + str(e))
     e_len = str(len(e)).zfill(SIZE_FIELD)
 
     return ''.join([h_len, str(h), e_len, e.decode()])
@@ -57,14 +55,10 @@ def decrypt_message(client_socket, mac_public_key, shared_secret):
     # Find the message
     e_len = int(client_socket.recv(SIZE_FIELD).decode())
     e = bytearray(client_socket.recv(e_len))
-    # print(f"Received encrypted message: {e}")
 
     message = decrypt(e, shared_secret)
-    # print('message:', message)
 
     # Check the signature
-    # print(message_hash)
-    # print(hash_function(message))
     if message_hash == hash_function(message):
         return True, message
     return False, 'message might be different than what the sender sent'
